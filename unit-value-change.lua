@@ -1,23 +1,7 @@
---unit-value-change.lua v1.0
+--unit/value-change.lua v1.0
 
-function split(str, pat)
-   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
-   local fpat = "(.-)" .. pat
-   local last_end = 1
-   local s, e, cap = str:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-  table.insert(t,cap)
-      end
-      last_end = e+1
-      s, e, cap = str:find(fpat, last_end)
-   end
-   if last_end <= #str then
-      cap = str:sub(last_end)
-      table.insert(t, cap)
-   end
-   return t
-end
+local split = require('split')
+local utils = require 'utils'
 
 function createcallback(etype,unitTarget,ctype,strength,save)
  return function(reseteffect)
@@ -104,7 +88,7 @@ validArgs = validArgs or utils.invert({
 local args = utils.processArgs({...}, validArgs)
 
 if args.help then -- Help declaration
- print([[unit-value-change.lua
+ print([[value-change.lua
   Change the value(s) of a unit
   arguments:
    -help
@@ -192,7 +176,7 @@ else
  return
 end
 dur = tonumber(args.dur) or 0 -- Check if there is a duration (default 0)
-
+printall(args)
 for i,etype in ipairs(token) do -- !!RUN EFFECT!!
  save = effect(etype,unit,mode,tonumber(value[i]),0,1)
  if dur > 0 then

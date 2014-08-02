@@ -1,23 +1,7 @@
---unit-attribute-change.lua v1.0
+--unit/attribute-change.lua v1.0
 
-function split(str, pat)
-   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
-   local fpat = "(.-)" .. pat
-   local last_end = 1
-   local s, e, cap = str:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-  table.insert(t,cap)
-      end
-      last_end = e+1
-      s, e, cap = str:find(fpat, last_end)
-   end
-   if last_end <= #str then
-      cap = str:sub(last_end)
-      table.insert(t, cap)
-   end
-   return t
-end
+local split = require('split')
+local utils = require 'utils'
 
 function createcallback(etype,mental,unitTarget,ctype,strength,save)
  return function(reseteffect)
@@ -66,7 +50,7 @@ end
 validArgs = validArgs or utils.invert({
  'help',
  'mental',
- 'physical'
+ 'physical',
  'fixed',
  'percent',
  'set',
@@ -76,7 +60,7 @@ validArgs = validArgs or utils.invert({
 local args = utils.processArgs({...}, validArgs)
 
 if args.help then -- Help declaration
- print([[unit-attribute-change.lua
+ print([[attribute-change.lua
   Change the attribute(s) of a unit
   arguments:
    -help
@@ -105,7 +89,7 @@ if args.help then -- Help declaration
  ]])
  return
 end
-
+printall(args)
 if args.unit and tonumber(args.unit) then -- Check for unit declaration !REQUIRED
  unit = df.unit.find(tonumber(args.unit))
 else
@@ -170,3 +154,5 @@ elseif args.physical then -- Check if you are changing physical attributes. !!RU
   end
  end
 end
+
+return "test"

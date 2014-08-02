@@ -1,4 +1,6 @@
---item-imbue.lua v1.0
+--item/imbue.lua v1.0
+local split = require('split')
+local utils = require 'utils'
 
 function createcallback(item,stype,sindex)
  return function (resetweapon)
@@ -55,7 +57,7 @@ validArgs = validArgs or utils.invert({
 local args = utils.processArgs({...}, validArgs)
 
 if args.help then -- Help declaration
- print([[item-imbue.lua
+ print([[imbue.lua
   Change the material a equipped item is made out of
   arguments:
    -help

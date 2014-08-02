@@ -1,4 +1,7 @@
---unit-body-change.lua v1.0
+--unit/body-change.lua v1.0
+
+local split = require('split')
+local utils = require 'utils'
 
 function checkbodycategory(unit,bp)
  local parts = {}
@@ -86,7 +89,7 @@ validArgs = validArgs or utils.invert({
 local args = utils.processArgs({...}, validArgs)
 
 if args.help then -- Help declaration
- print([[unit-body-change.lua
+ print([[body-change.lua
   Change the body parts of a unit (currently only supports changing temperature or setting on fire)
   arguments:
    -help

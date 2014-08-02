@@ -1,16 +1,12 @@
---special-counters.lua v1.0
-   
-local split = require('split')
-local utils = require 'utils'
-
-function counters(unit,types,ints,style,n)
- if unit == 'GLOBAL' then
-  keys = 'GLOBAL'
- else
-  keys = tostring(unit.id)
- end
- ints = tonumber(ints)
- n = tonumber(n)
+local M
+split = require('split')
+local function checkCounters(unit,array) -- CHECK 1
+ tempa = split(array,':')
+ keys = tostring(unit.id)
+ types = tempa[1]
+ ints = tempa[2]
+ style = tempa[3]
+ n = tonumber(tempa[4])
  v = 0
  skey = ''
  si = 0
@@ -103,11 +99,12 @@ function counters(unit,types,ints,style,n)
 
 
  if style == 'minimum' then
+  print(v,n,skey,si)
   if tonumber(v) >= n and n >= 0 then
    pers,status=dfhack.persistent.get(skey)
    pers.ints[si] = 0
    dfhack.persistent.save({key=skey,value=pers.value,ints=pers.ints})
-   return true
+   return true,'Counter minimum reached'
   end
  elseif style == 'percent' then
   rando = dfhack.random.new()
@@ -116,76 +113,13 @@ function counters(unit,types,ints,style,n)
    pers,status=dfhack.persistent.get(skey)
    pers.ints[si] = 0
    dfhack.persistent.save({key=skey,value=pers.value,ints=pers.ints})
-   return true
+   return true,'Counter percent triggered'
   end
  end
 
- return false
+ print(pers)
+ return false, 'Not enough counters on unit'
 end
+M = checkCounters
 
-validArgs = validArgs or utils.invert({
- 'help',
- 'unit',
- 'style',
- 'counter',
- 'increment',
- 'cap',
- 'script',
-})
-style = style or utils.invert({
- 'minimum',
- 'percent',
-})
-local args = utils.processArgs({...}, validArgs)
-
-if args.help then -- Help declaration
- print([[special-counters.lua
-  Allows for creation, examination, and ultimately triggering based on counters
-  arguments:
-   -help
-     print this help message
-   -unit id
-     id of the target unit to associate the counter with
-     DEFAULT 'GLOBAL'
-   -style minimum or percent
-     minimum - once the value of the counter has surpassed a certain amount, the counter will trigger the script. the counter is then reset to zero
-     percent - the script has a chance of triggering each time the counter is increased, with a 100% chance once it reaches a certain amount. the counter is reset to zero on triggering
-     DEFAULT minimum
-   -counter ANY_STRING
-     REQUIRED
-     any string value, the counter will be saved as this type
-     examples:
-      FIRE
-      BURN
-      POISON
-   -increment #
-     amount for the counter to change
-     DEFAULT 0
-   -cap #
-     level of triggering for the counter
-     once it hits the cap (or is triggered earlier by percentage) the counter will reset to 0
-     DEFAULT 1000000
-   -script [script and arguments]
-     REQUIRED
-     the script to trigger when the counter is reached
-     example:
-      [item-upgrade -unit \\UNIT_ID -weapon ALL -equipped -upgrade -dur 1000]  
-  example:
-   special-counters -unit \\UNIT_ID -style minimum -counter BERSERK -increment 1 -cap 10 -script [unit-attributes-change -unit \\UNIT_ID -physical [STRENGTH,AGILITY] -fixed [1000,\-200] ]
- ]])
- return
-end
-
-if args.counter == nil then -- Check for counter declaration !REQUIRED
- print('No counter selected')
- return
-end
-unit = df.unit.find(tonumber(args.unit)) or 'GLOBAL' -- Check for unit declaration
-args.style = style[args.style or 'minimum'] -- Set style
-if args.increment == nil then args.increment = 0 end -- Specify increment (default 0)
-if args.cap == nil then args.cap = 1000000 end -- Specify cap (default 1000000)
-
-trigger = counters(unit,args.counter,args.increment,args.style,args.cap)
-if trigger then
- dfhack.run_script(args.script[1],select(2,table.unpack(args.script)))
-end
+return M

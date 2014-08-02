@@ -1,5 +1,8 @@
 --special-spawnflow.lua v1.0
 
+local split = require('split')
+local utils = require 'utils'
+
 flowtypes = {
 miasma = 0,
 mist = 1,

@@ -1,23 +1,7 @@
---item-improve.lua v1.0
+--item/improve.lua v1.0
 
-function split(str, pat)
-   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
-   local fpat = "(.-)" .. pat
-   local last_end = 1
-   local s, e, cap = str:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-  table.insert(t,cap)
-      end
-      last_end = e+1
-      s, e, cap = str:find(fpat, last_end)
-   end
-   if last_end <= #str then
-      cap = str:sub(last_end)
-      table.insert(t, cap)
-   end
-   return t
-end
+local split = require('split')
+local utils = require 'utils'
 
 function createcallback(x,sid)
  return function(resetitem)
@@ -105,7 +89,7 @@ validArgs = validArgs or utils.invert({
 local args = utils.processArgs({...}, validArgs)
 
 if args.help then -- Help declaration
- print([[item-improve.lua
+ print([[improve.lua
   Change the quality of an item
   arguments:
    -help

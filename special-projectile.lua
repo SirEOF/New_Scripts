@@ -1,29 +1,13 @@
 --special-projectile.lua v1.0
 
-function split(str, pat)
-   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
-   local fpat = "(.-)" .. pat
-   local last_end = 1
-   local s, e, cap = str:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-  table.insert(t,cap)
-      end
-      last_end = e+1
-      s, e, cap = str:find(fpat, last_end)
-   end
-   if last_end <= #str then
-      cap = str:sub(last_end)
-      table.insert(t, cap)
-   end
-   return t
-end
+local split = require('split')
+local utils = require 'utils'
 
 validArgs = validArgs or utils.invert({
  'help',
  'unit_source',
  'unit_target',
- 'location_source'
+ 'location_source',
  'location_target',
  'mat',
  'item',
@@ -31,7 +15,7 @@ validArgs = validArgs or utils.invert({
  'maxrange',
  'velocity',
  'minrange',
- 'hitchance'
+ 'hitchance',
 })
 local args = utils.processArgs({...}, validArgs)
 
@@ -147,7 +131,7 @@ for i = 1, number, 1 do
    return
   end
   item=df['item_ammost']:new()
- elseif split(object,';')[1] == 'WEAPON' then
+ elseif split(object,':')[1] == 'WEAPON' then
   item_index = df.item_type['WEAPON']
   item_subtype = -1
   for i=0,dfhack.items.getSubtypeCount(item_index)-1,1 do
